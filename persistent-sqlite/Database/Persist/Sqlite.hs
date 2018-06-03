@@ -4,7 +4,6 @@
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE ScopedTypeVariables #-}
-{-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE PatternGuards #-}
 -- | A sqlite backend for persistent.
 --
@@ -58,7 +57,7 @@ import Data.Pool (Pool)
 import Data.Text (Text)
 import qualified Data.Text as T
 import qualified Data.Text.IO as TIO
-import Lens.Micro.TH (makeLenses)
+import Lens.Micro.Type (Lens')
 
 -- | Create a pool of SQLite connections.
 --
@@ -550,7 +549,28 @@ data SqliteConnectionInfo = SqliteConnectionInfo
     , _walEnabled :: Bool -- ^ if the write-ahead log is enabled - see https://github.com/yesodweb/persistent/issues/363.
     , _fkEnabled :: Bool -- ^ if foreign-key constraints are enabled.
     } deriving Show
-makeLenses ''SqliteConnectionInfo
+
+fkEnabled ::
+  Lens' SqliteConnectionInfo Bool
+fkEnabled f_aF8i (SqliteConnectionInfo x_aF8j x_aF8k x_aF8l)
+  = (fmap
+        (\ y_aF8m -> ((SqliteConnectionInfo x_aF8j) x_aF8k) y_aF8m))
+      (f_aF8i x_aF8l)
+{-# INLINE fkEnabled #-}
+sqlConnectionStr ::
+  Lens' SqliteConnectionInfo Text
+sqlConnectionStr f_aF8n (SqliteConnectionInfo x_aF8o x_aF8p x_aF8q)
+  = (fmap
+        (\ y_aF8r -> ((SqliteConnectionInfo y_aF8r) x_aF8p) x_aF8q))
+      (f_aF8n x_aF8o)
+{-# INLINE sqlConnectionStr #-}
+walEnabled ::
+  Lens' SqliteConnectionInfo Bool
+walEnabled f_aF8s (SqliteConnectionInfo x_aF8t x_aF8u x_aF8v)
+  = (fmap
+        (\ y_aF8w -> ((SqliteConnectionInfo x_aF8t) y_aF8w) x_aF8v))
+      (f_aF8s x_aF8u)
+{-# INLINE walEnabled #-}
 
 instance FromJSON SqliteConnectionInfo where
     parseJSON v = modifyFailure ("Persistent: error loading SqliteConnectionInfo: " ++) $
