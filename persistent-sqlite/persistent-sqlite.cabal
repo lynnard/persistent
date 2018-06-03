@@ -79,8 +79,10 @@ library
 
     c-sources: cbits/config.c
 
-    if !os(windows)
-        extra-libraries: pthread
+    -- commenting this out as on Android no direct linkage with pthread is needed.
+    -- TODO: use condition on Android os?
+    -- if !os(windows)
+    --     extra-libraries: pthread
 
 source-repository head
   type:     git
